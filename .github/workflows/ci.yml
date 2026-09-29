@@ -20,7 +20,8 @@ jobs:
       - name: Seeded data is up to date
         run: |
           pnpm gen
-          git diff --exit-code -- data/demo
+          git diff --exit-code -- data/demo/field.json data/demo/daily.parquet
+          pnpm exec tsx scripts/tables-match.ts
       - run: pnpm typecheck
       - run: pnpm lint
       - run: pnpm test
