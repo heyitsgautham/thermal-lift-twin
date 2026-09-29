@@ -17,7 +17,8 @@
     "api": "cd apps/api && .venv/bin/uvicorn twin_api.main:app --port 8000",
     "test:api": "cd apps/api && .venv/bin/pytest -q",
     "voiceover": "tsx recording/write-voiceover.ts",
-    "hero-gif": "tsx recording/hero-gif.ts"
+    "hero-gif": "tsx recording/hero-gif.ts",
+    "video:story": "tsx recording/story-record.ts"
   },
   "devDependencies": {
     "@types/node": "^22",
