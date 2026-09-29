@@ -17,12 +17,12 @@
     "api": "cd apps/api && .venv/bin/uvicorn twin_api.main:app --port 8000",
     "test:api": "cd apps/api && .venv/bin/pytest -q",
     "voiceover": "tsx recording/write-voiceover.ts",
-    "hero-gif": "tsx recording/hero-gif.ts",
     "video:story": "tsx recording/story-record.ts",
     "video:story-3d": "tsx recording/story-record-3d.ts",
     "story-3d:timing": "tsx recording/story-record-3d.ts --timing-only",
     "video:final": "tsx recording/final-cut.ts",
-    "check:names": "tsx scripts/private-names.ts"
+    "check:names": "tsx scripts/private-names.ts",
+    "hero-shot": "tsx recording/hero-shot.ts"
   },
   "devDependencies": {
     "@types/node": "^22",

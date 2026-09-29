@@ -5,7 +5,7 @@ Oil India Limited problem statement. Team 2, Saveetha Engineering College.
 Plans the steam cycle day by day, sequences steam across the field's generators,
 and runs the pump to the cooling curve, with the cost of a rod failure set against the cost of slowing down.
 
-![The steam calendar drag: BGW-14 moves to its re-steam day, the generators overload, the twin moves BGW-22](docs/hero.gif)
+![Well BGW-14 at constant speed on 8 Nov, with the rods floating at the pump](docs/hero.png)
 
 Status. Target product and working prototype on synthetic data for the field generated
 by the same physics the twin runs on. Public field facts are cited in [docs/](docs/honesty.md).
@@ -58,7 +58,7 @@ The voiceover script with its timings is [recording/voiceover.md](recording/voic
 pnpm build && pnpm start      # in one terminal
 pnpm video                    # writes recording/out/calendar-take.mp4
 pnpm voiceover                # rewrites recording/voiceover.md and checks the take's timings
-pnpm hero-gif                 # cuts docs/hero.gif from the MP4
+pnpm hero-shot                # captures docs/hero.png from a neutral build
 pnpm shots                    # hero screenshots
 ```
 
