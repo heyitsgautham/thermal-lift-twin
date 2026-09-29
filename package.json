@@ -1,0 +1,40 @@
+{
+  "name": "thermal-lift-twin",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.26.2",
+  "scripts": {
+    "dev": "pnpm --filter @bgw/web dev",
+    "build": "pnpm --filter @bgw/web build",
+    "start": "pnpm --filter @bgw/web start",
+    "gen": "tsx packages/simulate/src/cli.ts",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit && pnpm --filter @bgw/web exec tsc --noEmit",
+    "lint": "eslint .",
+    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
+    "shots": "tsx recording/take.ts",
+    "video": "tsx recording/record.ts",
+    "api": "cd apps/api && .venv/bin/uvicorn twin_api.main:app --port 8000",
+    "test:api": "cd apps/api && .venv/bin/pytest -q",
+    "voiceover": "tsx recording/write-voiceover.ts",
+    "hero-gif": "tsx recording/hero-gif.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.3.6",
+    "ffmpeg-static": "5.3.0",
+    "hyparquet": "1.31.1",
+    "hyparquet-writer": "0.16.10",
+    "playwright": "1.63.0",
+    "tsx": "^4.23.15",
+    "typescript": "^5",
+    "vitest": "^5.0.2"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "ffmpeg-static"
+    ]
+  }
+}

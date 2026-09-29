@@ -1,0 +1,14 @@
+{
+  "name": "@bgw/simulate",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@bgw/physics": "workspace:*",
+    "@bgw/optimise": "workspace:*",
+    "hyparquet-writer": "0.16.10"
+  }
+}
