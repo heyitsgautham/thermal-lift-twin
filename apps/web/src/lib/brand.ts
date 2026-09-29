@@ -4,6 +4,8 @@
 //
 //   NEXT_PUBLIC_PRODUCT   product name          NEXT_PUBLIC_EVENT   event label
 //   NEXT_PUBLIC_FIELD     oil field's name      NEXT_PUBLIC_PS      problem statement ID
+//
+// `pnpm check:names` fails if any of these values appears in a tracked file.
 
 export const BRAND = {
   product: process.env.NEXT_PUBLIC_PRODUCT || "Thermal Lift Twin",

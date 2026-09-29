@@ -11,7 +11,7 @@
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit && pnpm --filter @bgw/web exec tsc --noEmit",
     "lint": "eslint .",
-    "check": "pnpm typecheck && pnpm lint && pnpm test && pnpm build",
+    "check": "pnpm check:names && pnpm typecheck && pnpm lint && pnpm test && pnpm build",
     "shots": "tsx recording/take.ts",
     "video": "tsx recording/record.ts",
     "api": "cd apps/api && .venv/bin/uvicorn twin_api.main:app --port 8000",
@@ -21,7 +21,8 @@
     "video:story": "tsx recording/story-record.ts",
     "video:story-3d": "tsx recording/story-record-3d.ts",
     "story-3d:timing": "tsx recording/story-record-3d.ts --timing-only",
-    "video:final": "tsx recording/final-cut.ts"
+    "video:final": "tsx recording/final-cut.ts",
+    "check:names": "tsx scripts/private-names.ts"
   },
   "devDependencies": {
     "@types/node": "^22",
