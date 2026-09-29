@@ -41,7 +41,7 @@ describe("seeded field", () => {
     expect(Math.abs(today - 1202) / 1202).toBeLessThan(0.15);
   });
 
-  it("has 60 to 80 failures over the eight-year history", () => {
+  it("has 60 to 80 failures over the history since 2017", () => {
     expect(generated.dataset.failures.length).toBeGreaterThanOrEqual(60);
     expect(generated.dataset.failures.length).toBeLessThanOrEqual(80);
     expect(generated.dataset.failures.every((f) => f.day_d < 0)).toBe(true);

@@ -25,7 +25,7 @@ import {
 } from "@bgw/optimise";
 import { Rng } from "./rng";
 
-// Eight-year daily history for every producing well, generated from the same
+// Daily history since April 2017 for every producing well, generated from the same
 // physics the twin runs. Current practice (constant speed, pump-off timer) sets
 // the pump, rod-float days add impact loading, failures are drawn from the
 // Weibull hazard, and card-shape drift rises for five to ten days before each

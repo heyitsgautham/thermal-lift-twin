@@ -1,6 +1,6 @@
 // Writes the seeded demo field. Same seed, same files. Run with `pnpm gen`.
 //   data/demo/field.json     wells, cycles, plan, health, calibration, map
-//   data/demo/daily.parquet  eight years of daily production and SRP telemetry
+//   data/demo/daily.parquet  daily production and SRP telemetry since April 2017
 //   data/demo/tables.json    per-cycle oil curves the Python API schedules with
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";

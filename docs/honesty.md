@@ -13,7 +13,7 @@ The model's field rate on the as-of date is within 5% of that figure.
 
 ## What is synthetic
 
-The eight-year history, every cycle, every card, every failure and every well position.
+The history since April 2017, every cycle, every card, every failure and every well position.
 They come from the simulator in `packages/simulate`, seeded, so every run gives the same field.
 Because the history and the twin share the physics, the calibration plot on the Model screen checks the plumbing, not the physics.
 

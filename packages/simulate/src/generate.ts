@@ -174,7 +174,7 @@ export function generateField(config: FixtureConfig = FIXTURE): FieldDataset {
   return buildField(config, false).dataset;
 }
 
-/** The field with its eight-year daily history and the derived health and calibration data. */
+/** The field with its daily history since April 2017 and the derived health and calibration data. */
 export function generateFieldWithHistory(config: FixtureConfig = FIXTURE): GeneratedField {
   return buildField(config, true);
 }
