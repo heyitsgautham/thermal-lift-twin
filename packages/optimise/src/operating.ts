@@ -33,7 +33,8 @@ export const OPERATING = {
   floatRatioTarget: 0.85,
   /** Constant-speed float ratio from which a day is in the rod-float risk band. */
   riskBandRatio: 0.9,
-  runtimeStep: 0.1,
+  /** Pump-off timer step, 5% of a day. Timers are set in minutes, and a coarser step leaves the barrel part empty. */
+  runtimeStep: 0.05,
   /** Shortest share of the day a pump-off timer runs the unit. */
   minRuntime_frac: 0.1,
 } as const;

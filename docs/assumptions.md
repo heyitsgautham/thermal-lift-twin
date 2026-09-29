@@ -15,6 +15,7 @@ Each is a setting in the code or the fixture, and each is shown on the Model scr
 | Steam cost | 0.50 bbl oil per tonne | fixture, a setting in the what-if lab | Prices steam in the re-steam rule and plan value. |
 | Rod string | 7/8 in rods, 2 7/8 in tubing, pump at 1,100 m | `packages/physics/src/rod-string.ts` | Pump depth follows the published 1,150 m Jodhpur Sandstone. |
 | Pump limits | 3 to 6 SPM constant speed, downstroke up to 2× the upstroke with a VFD | same | Slowest speed of a typical unit and a conservative VFD profile. |
+| Pump-off timer | runs in steps of 5% of a day, at least 10% | `packages/optimise/src/operating.ts` | Timers are set in minutes. A coarser step leaves the barrel part empty, which is fluid pound. |
 | Wellhead temperature | 30 °C ground plus 55% of the bottomhole rise | `well-state.ts` | Rod drag uses the tubing's mean temperature. |
 | Failure hazard | Weibull, shape 1.6, scale 8 impact units; base 0.15 per well-year | `packages/optimise/src/reliability.ts` | Tuned so the eight-year history has 60 to 80 failures. |
 | Drift gains | 18 per unit of drift over 0.12, 90 per unit of daily slope | same | Hand-set. Only checked against synthetic history. |
