@@ -20,7 +20,8 @@
     "hero-gif": "tsx recording/hero-gif.ts",
     "video:story": "tsx recording/story-record.ts",
     "video:story-3d": "tsx recording/story-record-3d.ts",
-    "story-3d:timing": "tsx recording/story-record-3d.ts --timing-only"
+    "story-3d:timing": "tsx recording/story-record-3d.ts --timing-only",
+    "video:final": "tsx recording/final-cut.ts"
   },
   "devDependencies": {
     "@types/node": "^22",

@@ -51,3 +51,6 @@ __pycache__/
 
 # recording scratch
 recording/out/frames/
+
+# voiceover clips, mixed into the final video by recording/final-cut.ts
+recording/voice/
