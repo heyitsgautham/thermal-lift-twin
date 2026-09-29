@@ -13,6 +13,13 @@ export default defineConfig([
       "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", ignoreRestSiblings: true }],
     },
   },
+  {
+    // The 3D story writes into three.js buffers, textures and uniforms on every
+    // frame, inside useFrame. That mutation is how react-three-fiber works, so
+    // the compiler's immutability rule does not apply there.
+    files: ["apps/web/src/components/story-3d/scene/**"],
+    rules: { "react-hooks/immutability": "off" },
+  },
   globalIgnores([
     "**/.next/**",
     "**/node_modules/**",

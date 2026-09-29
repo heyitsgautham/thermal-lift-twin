@@ -18,7 +18,9 @@
     "test:api": "cd apps/api && .venv/bin/pytest -q",
     "voiceover": "tsx recording/write-voiceover.ts",
     "hero-gif": "tsx recording/hero-gif.ts",
-    "video:story": "tsx recording/story-record.ts"
+    "video:story": "tsx recording/story-record.ts",
+    "video:story-3d": "tsx recording/story-record-3d.ts",
+    "story-3d:timing": "tsx recording/story-record-3d.ts --timing-only"
   },
   "devDependencies": {
     "@types/node": "^22",
