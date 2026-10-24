@@ -28,7 +28,7 @@ _REQUEST_ID = re.compile(r"[A-Za-z0-9._-]{1,64}")
 
 app = FastAPI(
     title="Thermal Lift Twin API",
-    version="0.1.0",
+    version="0.2.0",
     description="Seeded synthetic heavy-oil field: wells, cycles, telemetry, failures, schedules, and the generator repair.",
 )
 
