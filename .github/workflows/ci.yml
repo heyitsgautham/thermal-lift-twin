@@ -131,3 +131,22 @@ jobs:
         run: |
           curl -sSfL "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz" | tar -xz gitleaks
           ./gitleaks git --no-banner --redact --verbose .
+
+  docker:
+    name: Docker stack
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and start both services
+        run: docker compose up --build --detach --wait --wait-timeout 300
+      - name: Smoke test
+        run: |
+          curl -fsS http://localhost:8000/health
+          curl -fsS http://localhost:8000/wells/BGW-14 -o /dev/null
+          curl -fsS http://localhost:3000/story -o /dev/null
+          curl -fsS http://localhost:3000/calendar -o /dev/null
+      - name: Service logs
+        if: always()
+        run: docker compose logs --no-color
+      - if: always()
+        run: docker compose down
