@@ -16,7 +16,7 @@ check:
 	pnpm check
 
 api:
-	cd apps/api && python3 -m venv .venv && .venv/bin/pip install -q -r requirements.txt && .venv/bin/pytest -q
+	cd apps/api && uv sync --frozen && uv run --frozen pytest -q --cov
 
 video:
 	pnpm video
