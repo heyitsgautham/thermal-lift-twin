@@ -1,8 +1,18 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
+const path = (p: string) => fileURLToPath(new URL(p, import.meta.url));
+
 export default defineConfig({
+  resolve: {
+    // The web app's own path aliases, from apps/web/tsconfig.json.
+    alias: [
+      { find: /^@\//, replacement: path("./apps/web/src/") },
+      { find: /^@data\//, replacement: path("./data/") },
+    ],
+  },
   test: {
-    include: ["packages/*/test/**/*.test.ts"],
+    include: ["packages/*/test/**/*.test.ts", "apps/web/src/**/*.test.{ts,tsx}"],
     coverage: {
       provider: "v8",
       reporter: ["text-summary", "lcov"],
