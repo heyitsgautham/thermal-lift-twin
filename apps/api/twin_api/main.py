@@ -2,21 +2,64 @@
 
 from __future__ import annotations
 
+import logging
+import re
+import time
+import uuid
 from collections import Counter
 from datetime import date
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.exception_handlers import request_validation_exception_handler
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
 
-from . import data
+from . import data, logs
 from .schedule import Scheduler, repair
+
+logs.configure()
+log = logging.getLogger("twin_api.http")
+
+# A caller's X-Request-ID is echoed and logged only if it is short and plain,
+# so it cannot inject fake fields or lines into the log.
+_REQUEST_ID = re.compile(r"[A-Za-z0-9._-]{1,64}")
 
 app = FastAPI(
     title="Thermal Lift Twin API",
     version="0.1.0",
     description="Seeded synthetic heavy-oil field: wells, cycles, telemetry, failures, schedules, and the generator repair.",
 )
+
+
+@app.middleware("http")
+async def log_requests(request: Request, call_next) -> Response:
+    given = request.headers.get("x-request-id", "")
+    request_id = given if _REQUEST_ID.fullmatch(given) else uuid.uuid4().hex
+    request.state.request_id = request_id
+    context = {"request_id": request_id, "method": request.method, "path": request.url.path}
+    start = time.perf_counter()
+    try:
+        response = await call_next(request)
+    except Exception:
+        log.exception("unhandled error", extra=context)
+        response = JSONResponse({"detail": "Internal server error", "request_id": request_id}, status_code=500)
+    response.headers["x-request-id"] = request_id
+    duration_ms = round((time.perf_counter() - start) * 1000, 1)
+    log.info("request", extra={**context, "status": response.status_code, "duration_ms": duration_ms})
+    return response
+
+
+@app.exception_handler(RequestValidationError)
+async def log_validation_error(request: Request, exc: RequestValidationError) -> Response:
+    errors = [{"loc": list(e["loc"]), "type": e["type"]} for e in exc.errors()]
+    log.warning(
+        "validation failed",
+        extra={"request_id": getattr(request.state, "request_id", None), "path": request.url.path, "errors": errors},
+    )
+    return await request_validation_exception_handler(request, exc)
+
 
 _scheduler: Scheduler | None = None
 
