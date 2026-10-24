@@ -1,0 +1,14 @@
+# Keep the build context small and keep local display names out of images.
+**/node_modules
+**/.next
+**/.venv
+**/__pycache__
+**/.pytest_cache
+**/.ruff_cache
+**/.coverage
+coverage
+.env*
+**/.env*
+.git
+recording
+docs/hero.png

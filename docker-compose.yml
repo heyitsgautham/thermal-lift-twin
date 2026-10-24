@@ -1,0 +1,25 @@
+# The whole stack on one machine: docker compose up --build
+# Web on http://localhost:3000, API on http://localhost:8000 (docs at /docs).
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_PRODUCT: ${NEXT_PUBLIC_PRODUCT:-}
+        NEXT_PUBLIC_FIELD: ${NEXT_PUBLIC_FIELD:-}
+        NEXT_PUBLIC_EVENT: ${NEXT_PUBLIC_EVENT:-}
+        NEXT_PUBLIC_PS: ${NEXT_PUBLIC_PS:-}
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
