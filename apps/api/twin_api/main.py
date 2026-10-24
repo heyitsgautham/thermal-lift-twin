@@ -16,7 +16,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
 
-from . import data, logs
+from . import data, logs, metrics
 from .schedule import Scheduler, repair
 
 logs.configure()
@@ -46,8 +46,10 @@ async def log_requests(request: Request, call_next) -> Response:
         log.exception("unhandled error", extra=context)
         response = JSONResponse({"detail": "Internal server error", "request_id": request_id}, status_code=500)
     response.headers["x-request-id"] = request_id
-    duration_ms = round((time.perf_counter() - start) * 1000, 1)
-    log.info("request", extra={**context, "status": response.status_code, "duration_ms": duration_ms})
+    seconds = time.perf_counter() - start
+    route = getattr(request.scope.get("route"), "path", metrics.UNMATCHED)
+    metrics.observe(request.method, route, response.status_code, seconds)
+    log.info("request", extra={**context, "route": route, "status": response.status_code, "duration_ms": round(seconds * 1000, 1)})
     return response
 
 
@@ -115,6 +117,11 @@ def _plan(req: PlanRequest) -> list[dict[str, Any]]:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok", "data": "synthetic"}
+
+
+@app.get("/metrics", include_in_schema=False)
+def prometheus_metrics() -> Response:
+    return Response(metrics.render(), media_type=metrics.CONTENT_TYPE)
 
 
 @app.get("/field")
