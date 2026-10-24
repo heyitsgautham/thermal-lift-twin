@@ -46,6 +46,7 @@ CI runs the same commands, plus a dependency audit, a gitleaks scan and a Docker
 | `packages/<name>/src` | `packages/<name>/test/*.test.ts` |
 | `apps/web/src/**` | a `__tests__` folder next to the module, `*.test.ts` or `*.test.tsx` |
 | `apps/api/twin_api` | `apps/api/tests/test_*.py` |
+| `recording/*.ts` | `recording/*.test.ts`, for helpers that run outside the browser |
 
 Web component tests start with `// @vitest-environment jsdom` and render through Testing Library.
 Tests that need the field read `data/demo/field.json` or call `generateField()`, so they always see the same seeded data.

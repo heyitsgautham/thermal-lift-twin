@@ -57,7 +57,7 @@ For a production build of the web app, run `pnpm build && pnpm start`, or `make 
 ## Test
 
 ```bash
-pnpm test        # vitest, the packages and the web app
+pnpm test        # vitest, the packages, the web app and the recording helpers
 pnpm coverage    # the same suite with coverage floors
 pnpm test:api    # pytest with coverage, from apps/api
 pnpm check       # name check, typecheck, lint, tests, then a production build
@@ -68,6 +68,7 @@ pnpm check       # name check, typecheck, lint, tests, then a production build
 | Model | `packages/*/test` | physics anchors, the re-steam rule, scheduler and repair, reliability, the seeded field |
 | Web | `apps/web/src/**/__tests__` | calendar geometry and dates, the story store, `useTwin`, and rendered screens in jsdom |
 | API | `apps/api/tests` | every route, input validation, JSON logging, and the Python scheduler against the TypeScript answer |
+| Recording | `recording/*.test.ts` | zoom framing and cursor parking for the recorded takes |
 
 Coverage floors fail the run when coverage slips.
 `packages/*/src` must stay at 95% of lines, the web app's `.ts` modules at 70%, and the API at 90%.
