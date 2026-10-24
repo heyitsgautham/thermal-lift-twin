@@ -9,6 +9,6 @@
   "dependencies": {
     "@bgw/physics": "workspace:*",
     "@bgw/optimise": "workspace:*",
-    "hyparquet-writer": "0.16.10"
+    "hyparquet-writer": "0.17.0"
   }
 }
