@@ -74,3 +74,44 @@ def test_unknown_slots_are_rejected():
         "injectionTemperature_C": 280,
     }
     assert client.post("/schedules/check", json={"plan": [bad]}).status_code == 422
+
+
+def _issued_plan():
+    return client.get("/schedules/issued").json()
+
+
+def test_a_slot_cannot_start_before_the_plan():
+    """A negative start used to index past the oil curve and return a 500."""
+    plan = _issued_plan()
+    plan[0] = dict(plan[0], start_d=-1000)
+    res = client.post("/schedules/check", json={"plan": plan})
+    assert res.status_code == 422
+    assert res.json()["detail"][0]["loc"] == ["body", "plan", 0, "start_d"]
+
+
+def test_a_slot_can_be_deferred_past_the_horizon():
+    plan = _issued_plan()
+    plan[0] = dict(plan[0], start_d=500)
+    assert client.post("/schedules/check", json={"plan": plan}).status_code == 200
+
+
+def test_a_slot_listed_twice_is_rejected():
+    plan = _issued_plan()
+    res = client.post("/schedules/check", json={"plan": [*plan, plan[0]]})
+    assert res.status_code == 422
+    assert plan[0]["id"] in res.json()["detail"]
+
+
+def test_a_slot_moved_to_another_well_is_rejected():
+    plan = _issued_plan()
+    other = next(s["wellId"] for s in plan if s["wellId"] != plan[0]["wellId"])
+    plan[0] = dict(plan[0], wellId=other)
+    res = client.post("/schedules/check", json={"plan": plan})
+    assert res.status_code == 422
+    assert f"{plan[0]['id']} belongs to" in res.json()["detail"]
+
+
+def test_repair_rejects_a_pin_outside_the_plan():
+    res = client.post("/schedules/repair", json={"plan": _issued_plan(), "pinned": ["BGW-99#1"]})
+    assert res.status_code == 422
+    assert "BGW-99#1" in res.json()["detail"]

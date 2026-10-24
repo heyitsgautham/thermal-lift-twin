@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections import Counter
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
@@ -30,7 +31,9 @@ class SlotIn(BaseModel):
     id: str
     wellId: str
     cycleNumber: int
-    start_d: int
+    # Day 0 is the plan's first day. A slot can move past the horizon, which
+    # defers it out of the window, but not before the plan starts.
+    start_d: int = Field(ge=0)
     injection_d: int
     soak_d: int
     rate_t_per_h: float
@@ -52,10 +55,16 @@ class RepairRequest(PlanRequest):
 
 
 def _plan(req: PlanRequest) -> list[dict[str, Any]]:
-    known = scheduler().slot_table
-    unknown = [s.id for s in req.plan if s.id not in known]
+    sched = scheduler()
+    unknown = [s.id for s in req.plan if s.id not in sched.slot_table]
     if unknown:
         raise HTTPException(422, f"Unknown slots {unknown}. Slots must come from the issued plan; move them by changing start_d.")
+    repeated = sorted(slot_id for slot_id, n in Counter(s.id for s in req.plan).items() if n > 1)
+    if repeated:
+        raise HTTPException(422, f"Slots {repeated} appear more than once. Each issued slot can be scheduled once.")
+    misplaced = [f"{s.id} belongs to {sched.slot_well[s.id]}" for s in req.plan if s.wellId != sched.slot_well[s.id]]
+    if misplaced:
+        raise HTTPException(422, f"Slots on the wrong well: {', '.join(misplaced)}.")
     return [s.model_dump() for s in req.plan]
 
 
@@ -136,4 +145,9 @@ def check(req: PlanRequest) -> dict[str, Any]:
 @app.post("/schedules/repair")
 def repair_plan(req: RepairRequest) -> dict[str, Any]:
     cap = req.capacity.units * req.capacity.unitCapacity_t_per_h
-    return repair(scheduler(), _plan(req), set(req.pinned), cap)
+    plan = _plan(req)
+    in_plan = {s["id"] for s in plan}
+    stray = [p for p in req.pinned if p not in in_plan]
+    if stray:
+        raise HTTPException(422, f"Pinned slots {stray} are not in the plan.")
+    return repair(scheduler(), plan, set(req.pinned), cap)
