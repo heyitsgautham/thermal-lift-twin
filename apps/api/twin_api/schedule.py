@@ -9,7 +9,8 @@ this port to the TypeScript answer for the demo edit, recorded in the same file.
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass, field as dc_field
+from dataclasses import dataclass
+from dataclasses import field as dc_field
 from typing import Any
 
 EPS = 1e-9
@@ -64,7 +65,9 @@ class Scheduler:
 
     @staticmethod
     def _cycle(t: dict[str, Any]) -> Cycle:
-        return Cycle(t["slotId"], t["start_d"], t["injection_d"], t["soak_d"], t["rate_t_per_h"], t["steam_t"], t["productionLeg_d"], t["oil"])
+        return Cycle(
+            t["slotId"], t["start_d"], t["injection_d"], t["soak_d"], t["rate_t_per_h"], t["steam_t"], t["productionLeg_d"], t["oil"]
+        )
 
     def cycles_for(self, well_id: str, plan: list[dict[str, Any]]) -> list[Cycle]:
         slots = sorted((s for s in plan if s["wellId"] == well_id), key=lambda s: s["start_d"])

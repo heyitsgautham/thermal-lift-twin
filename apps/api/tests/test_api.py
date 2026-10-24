@@ -45,7 +45,7 @@ def test_repair_matches_the_typescript_twin():
     assert is_close(sched.evaluate(tables["issuedPlan"], 24).value, golden["issuedValue_bbl"])
     res = repair(sched, plan, {golden["editedSlotId"]}, 24)
     assert [(m["wellId"], m["delta_d"]) for m in res["moves"]] == [(m["wellId"], m["delta_d"]) for m in golden["moves"]]
-    for mine, theirs in zip(res["moves"], golden["moves"]):
+    for mine, theirs in zip(res["moves"], golden["moves"], strict=True):
         assert is_close(mine["valueChange_bbl"], theirs["valueChange_bbl"])
         assert is_close(mine["oilChange_bbl"], theirs["oilChange_bbl"])
     assert is_close(res["totals"]["value_bbl"], golden["proposalValue_bbl"])
@@ -63,5 +63,14 @@ def test_repair_endpoint_holds_the_pinned_slot():
 
 
 def test_unknown_slots_are_rejected():
-    bad = {"id": "BGW-99#1", "wellId": "BGW-99", "cycleNumber": 1, "start_d": 5, "injection_d": 10, "soak_d": 5, "rate_t_per_h": 5, "injectionTemperature_C": 280}
+    bad = {
+        "id": "BGW-99#1",
+        "wellId": "BGW-99",
+        "cycleNumber": 1,
+        "start_d": 5,
+        "injection_d": 10,
+        "soak_d": 5,
+        "rate_t_per_h": 5,
+        "injectionTemperature_C": 280,
+    }
     assert client.post("/schedules/check", json={"plan": [bad]}).status_code == 422
