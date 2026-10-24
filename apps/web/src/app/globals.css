@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import "./shadcn-variants.css";
 
 /* Thermal Lift Twin. Sand base, oil-brown ink, phase colours from the plan:
    steam red, soak orange, produce teal, down grey. Light only, built for a
