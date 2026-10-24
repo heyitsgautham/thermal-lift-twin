@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections import Counter
+from datetime import date
 from typing import Any
 
 from fastapi import FastAPI, HTTPException
@@ -103,10 +104,13 @@ def cycles(well_id: str) -> list[dict[str, Any]]:
 
 
 @app.get("/wells/{well_id}/telemetry")
-def telemetry(well_id: str, date_from: str | None = None, date_to: str | None = None) -> list[dict[str, Any]]:
+def telemetry(well_id: str, date_from: date | None = None, date_to: date | None = None) -> list[dict[str, Any]]:
     if data.well(well_id) is None:
         raise HTTPException(404, f"No well {well_id}")
-    return data.telemetry(well_id, date_from, date_to)
+    if date_from and date_to and date_from > date_to:
+        raise HTTPException(422, f"date_from {date_from} is after date_to {date_to}")
+    # The parquet stores dates as ISO strings, which compare in date order.
+    return data.telemetry(well_id, date_from and date_from.isoformat(), date_to and date_to.isoformat())
 
 
 @app.get("/wells/{well_id}/health")

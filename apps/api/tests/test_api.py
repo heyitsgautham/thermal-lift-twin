@@ -115,3 +115,20 @@ def test_repair_rejects_a_pin_outside_the_plan():
     res = client.post("/schedules/repair", json={"plan": _issued_plan(), "pinned": ["BGW-99#1"]})
     assert res.status_code == 422
     assert "BGW-99#1" in res.json()["detail"]
+
+
+def test_telemetry_window_is_inclusive():
+    rows = client.get("/wells/BGW-14/telemetry", params={"date_from": "2026-09-01", "date_to": "2026-09-03"}).json()
+    assert [r["date"] for r in rows] == ["2026-09-01", "2026-09-02", "2026-09-03"]
+
+
+def test_telemetry_rejects_dates_that_are_not_iso_dates():
+    """A malformed date used to compare as a string and return an empty list with a 200."""
+    res = client.get("/wells/BGW-14/telemetry", params={"date_from": "garbage"})
+    assert res.status_code == 422
+    assert res.json()["detail"][0]["loc"] == ["query", "date_from"]
+
+
+def test_telemetry_rejects_a_reversed_window():
+    res = client.get("/wells/BGW-14/telemetry", params={"date_from": "2026-09-10", "date_to": "2026-09-01"})
+    assert res.status_code == 422
