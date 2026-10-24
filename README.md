@@ -112,6 +112,7 @@ Its tests replay the demo edit and must match the TypeScript repair move for mov
 | `GET /schedules/issued` | the plan in force |
 | `POST /schedules/check` | generator load, overload days and plan value for a plan |
 | `POST /schedules/repair` | a plan that fits the generators, holding the `pinned` slots |
+| `GET /metrics` | Prometheus request counts and latency by route |
 
 A plan may only use issued slot ids, each once and on its own well, with `start_d` at 0 or later.
 The API answers anything else with a 422 that names the slots.
