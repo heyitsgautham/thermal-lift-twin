@@ -13,7 +13,7 @@ import { Slider } from "@/components/ui/slider";
 import { shortDate } from "@/lib/dates";
 import { fmtFixed, fmtInt } from "@/lib/format";
 import { cn } from "@/lib/utils";
-import { useCssWellOptions, useCycleView } from "./cycle-plan";
+import { useCssWellOptions, useCycleView } from "./cycle-hooks";
 
 type Mode = "practice" | "twin";
 

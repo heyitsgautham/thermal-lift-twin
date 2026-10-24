@@ -10,7 +10,7 @@ import { Readout } from "@/components/kit/readout";
 import { useTwinContext } from "@/components/twin/twin-provider";
 import { shortDate } from "@/lib/dates";
 import { fmtFixed, fmtInt } from "@/lib/format";
-import { useCycleView } from "./cycle-plan";
+import { useCycleView } from "./cycle-hooks";
 import { BRAND } from "@/lib/brand";
 
 function Spark({ points, color, log = false }: { points: [number, number][]; color: string; log?: boolean }) {

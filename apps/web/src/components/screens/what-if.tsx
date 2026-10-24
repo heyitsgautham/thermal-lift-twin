@@ -14,7 +14,7 @@ import { Slider } from "@/components/ui/slider";
 import { fmtFixed, fmtInt, fmtSigned } from "@/lib/format";
 import { useTween } from "@/lib/use-tween";
 import { cn } from "@/lib/utils";
-import { useCssWellOptions, useCycleView } from "./cycle-plan";
+import { useCssWellOptions, useCycleView } from "./cycle-hooks";
 
 interface InputSpec {
   key: "steam_t" | "soak_d" | "steamCost_bbl_per_t";
