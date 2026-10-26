@@ -17,7 +17,9 @@ from typing import Any
 import pyarrow.compute as pc
 import pyarrow.parquet as pq
 
-DATA_DIR = Path(os.environ.get("BGW_DATA_DIR", Path(__file__).resolve().parents[3] / "data" / "demo"))
+DEFAULT_DATA_DIR = Path(__file__).resolve().parents[3] / "data" / "demo"
+# A blank BGW_DATA_DIR counts as unset. Path("") is the working directory, which never holds the dataset.
+DATA_DIR = Path(os.environ.get("BGW_DATA_DIR", "").strip() or DEFAULT_DATA_DIR)
 
 
 @lru_cache(maxsize=1)

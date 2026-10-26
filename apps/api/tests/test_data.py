@@ -80,3 +80,15 @@ def test_status_recovers_once_the_file_appears(empty_data_dir):
     assert data.status()["tables"] != "ok"
     (empty_data_dir / "tables.json").write_text("{}")
     assert data.status()["tables"] == "ok"
+
+
+@pytest.mark.parametrize("value", ["", "   "])
+def test_a_blank_bgw_data_dir_keeps_the_demo_dataset(monkeypatch, value):
+    monkeypatch.setenv("BGW_DATA_DIR", value)
+    try:
+        reloaded = importlib.reload(data)
+        assert reloaded.DATA_DIR == reloaded.DEFAULT_DATA_DIR
+        assert reloaded.status() == {"field": "ok", "tables": "ok", "daily": "ok"}
+    finally:
+        monkeypatch.delenv("BGW_DATA_DIR")
+        importlib.reload(data)
