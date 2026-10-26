@@ -1,6 +1,6 @@
 [project]
 name = "thermal-lift-twin-api"
-version = "0.2.0"
+version = "0.3.0"
 description = "FastAPI service for the Thermal Lift Twin: wells, cycles, telemetry, schedules and the generator repair."
 requires-python = ">=3.11"
 dependencies = [
