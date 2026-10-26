@@ -172,6 +172,8 @@ CI regenerates it on every push and fails if the committed files differ.
 | Secret scan | gitleaks over the full history |
 | Docker stack | `docker compose up --build --wait`, then requests to both services |
 
+`.github/workflows/codeql.yml` runs CodeQL's security-extended queries over the TypeScript and the Python on every push, every pull request and once a week.
+
 Dependabot opens weekly update PRs for npm and uv, and monthly ones for GitHub Actions.
 
 ## More
