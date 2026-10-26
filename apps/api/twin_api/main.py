@@ -15,9 +15,9 @@ from fastapi import FastAPI, HTTPException, Request
 from fastapi.exception_handlers import request_validation_exception_handler
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel, Field
 
 from . import __version__, data, logs, metrics, tracking
+from .models import Health, PlanCheck, PlanRequest, RepairRequest, RepairResult, WellSummary
 from .schedule import Scheduler, repair
 
 logs.configure()
@@ -75,33 +75,6 @@ def scheduler() -> Scheduler:
     return _scheduler
 
 
-class SlotIn(BaseModel):
-    id: str
-    wellId: str
-    cycleNumber: int
-    # Day 0 is the plan's first day. A slot can move past the horizon, which
-    # defers it out of the window, but not before the plan starts.
-    start_d: int = Field(ge=0)
-    injection_d: int
-    soak_d: int
-    rate_t_per_h: float
-    injectionTemperature_C: float
-
-
-class Capacity(BaseModel):
-    units: int = Field(2, ge=1, le=4)
-    unitCapacity_t_per_h: float = Field(12.0, gt=0)
-
-
-class PlanRequest(BaseModel):
-    plan: list[SlotIn]
-    capacity: Capacity = Capacity()
-
-
-class RepairRequest(PlanRequest):
-    pinned: list[str] = []
-
-
 def _plan(req: PlanRequest) -> list[dict[str, Any]]:
     sched = scheduler()
     unknown = [s.id for s in req.plan if s.id not in sched.slot_table]
@@ -116,7 +89,7 @@ def _plan(req: PlanRequest) -> list[dict[str, Any]]:
     return [s.model_dump() for s in req.plan]
 
 
-@app.get("/health", responses={503: {"description": "A dataset file is missing or unreadable"}})
+@app.get("/health", response_model=Health, responses={503: {"model": Health, "description": "A dataset file is missing or unreadable"}})
 def health() -> JSONResponse:
     """Ready when all three dataset files load. Docker's healthcheck polls this."""
     datasets = data.status()
@@ -138,7 +111,7 @@ def field_summary() -> dict[str, Any]:
     return {"meta": f["meta"], "field": f["field"], "assumptions": f["assumptions"], "history": f["history"]}
 
 
-@app.get("/wells")
+@app.get("/wells", response_model=list[WellSummary])
 def wells() -> list[dict[str, Any]]:
     return [
         {"id": w["id"], "status": w["status"], "completion": w["completion"], "location": w["location"], "fluid": w["fluid"]}
@@ -189,7 +162,7 @@ def issued() -> list[dict[str, Any]]:
     return data.field()["issuedPlan"]
 
 
-@app.post("/schedules/check")
+@app.post("/schedules/check", response_model=PlanCheck)
 def check(req: PlanRequest) -> dict[str, Any]:
     cap = req.capacity.units * req.capacity.unitCapacity_t_per_h
     ev = scheduler().evaluate(_plan(req), cap)
@@ -204,7 +177,7 @@ def check(req: PlanRequest) -> dict[str, Any]:
     }
 
 
-@app.post("/schedules/repair")
+@app.post("/schedules/repair", response_model=RepairResult)
 def repair_plan(req: RepairRequest) -> dict[str, Any]:
     cap = req.capacity.units * req.capacity.unitCapacity_t_per_h
     plan = _plan(req)

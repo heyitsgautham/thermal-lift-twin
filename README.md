@@ -114,6 +114,7 @@ Its tests replay the demo edit and must match the TypeScript repair move for mov
 | `POST /schedules/repair` | a plan that fits the generators, holding the `pinned` slots |
 | `GET /metrics` | Prometheus request counts and latency by route |
 
+`apps/api/twin_api/models.py` holds the request and response schemas, and http://localhost:8000/docs publishes them.
 A plan may only use issued slot ids, each once and on its own well, with `start_d` at 0 or later.
 The API answers anything else with a 422 that names the slots.
 Every request logs one JSON line to stderr with method, path, status, duration and a request id.
