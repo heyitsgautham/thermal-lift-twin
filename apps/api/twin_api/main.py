@@ -7,6 +7,7 @@ import re
 import time
 import uuid
 from collections import Counter
+from collections.abc import Awaitable, Callable
 from datetime import date
 from typing import Any
 
@@ -35,7 +36,7 @@ app = FastAPI(
 
 
 @app.middleware("http")
-async def log_requests(request: Request, call_next) -> Response:
+async def log_requests(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
     given = request.headers.get("x-request-id", "")
     request_id = given if _REQUEST_ID.fullmatch(given) else uuid.uuid4().hex
     request.state.request_id = request_id
@@ -167,7 +168,7 @@ def telemetry(well_id: str, date_from: date | None = None, date_to: date | None 
     if date_from and date_to and date_from > date_to:
         raise HTTPException(422, f"date_from {date_from} is after date_to {date_to}")
     # The parquet stores dates as ISO strings, which compare in date order.
-    return data.telemetry(well_id, date_from and date_from.isoformat(), date_to and date_to.isoformat())
+    return data.telemetry(well_id, date_from.isoformat() if date_from else None, date_to.isoformat() if date_to else None)
 
 
 @app.get("/wells/{well_id}/health")

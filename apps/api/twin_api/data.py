@@ -14,6 +14,7 @@ from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
+import pyarrow as pa
 import pyarrow.compute as pc
 import pyarrow.parquet as pq
 
@@ -33,7 +34,7 @@ def tables() -> dict[str, Any]:
 
 
 @lru_cache(maxsize=1)
-def daily():
+def daily() -> pa.Table:
     return pq.read_table(DATA_DIR / "daily.parquet")
 
 

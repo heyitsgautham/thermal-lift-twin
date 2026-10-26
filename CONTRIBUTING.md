@@ -34,6 +34,7 @@ pnpm coverage                   # coverage floors
 cd apps/api
 uv run --frozen ruff check .
 uv run --frozen ruff format --check .
+uv run --frozen mypy
 uv run --frozen pytest -q --cov
 ```
 

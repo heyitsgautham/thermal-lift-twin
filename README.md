@@ -167,7 +167,7 @@ CI regenerates it on every push and fails if the committed files differ.
 | Typecheck | `pnpm typecheck` |
 | Tests with coverage | `pnpm coverage` |
 | Seeded data and build | `pnpm gen` with a diff check, then `pnpm build` |
-| API lint and tests | `ruff check`, `ruff format --check`, `pytest --cov` |
+| API lint, typecheck and tests | `ruff check`, `ruff format --check`, `mypy`, `pytest --cov` |
 | Dependency audit | `pnpm audit --audit-level=high`, and `pip-audit` on `uv.lock` |
 | Secret scan | gitleaks over the full history |
 | Docker stack | `docker compose up --build --wait`, then requests to both services |
