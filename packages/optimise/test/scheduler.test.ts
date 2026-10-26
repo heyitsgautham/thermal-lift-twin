@@ -43,7 +43,9 @@ describe("generator repair", () => {
     expect(r.tested.shifts).toBeGreaterThan(20);
   });
 
-  it("reports no supported proposal when capacity cannot carry the plan", () => {
+  // With no feasible plan the repair tries every option before it gives up, about
+  // 1.5 s alone and past vitest's 5 s default when the coverage run loads every core.
+  it("reports no supported proposal when capacity cannot carry the plan", { timeout: 20_000 }, () => {
     const r = repairPlan(field, edited, new Set([slot.id]), { units: 1, unitCapacity_t_per_h: 12 });
     expect(r.feasible).toBe(false);
   });
