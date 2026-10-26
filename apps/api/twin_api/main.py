@@ -35,6 +35,21 @@ app = FastAPI(
 )
 
 
+# Every response is JSON or the docs page, so browsers need not sniff types,
+# frame it or send referrers. The CSP leaves room for the Swagger UI at /docs,
+# and ReDoc at /redoc, which load their scripts, styles and fonts from CDNs.
+SECURITY_HEADERS = {
+    "X-Content-Type-Options": "nosniff",
+    "X-Frame-Options": "DENY",
+    "Referrer-Policy": "no-referrer",
+    "Content-Security-Policy": (
+        "default-src 'none'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; "
+        "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src https://fonts.gstatic.com; "
+        "img-src 'self' data: https://fastapi.tiangolo.com https://cdn.redoc.ly; "
+        "worker-src blob:; connect-src 'self'; frame-ancestors 'none'"
+    ),
+}
+
 # A full plan is one slot per issued slot, a few kilobytes. Anything that
 # declares far more is refused before the body is read or parsed.
 MAX_BODY_BYTES = 256 * 1024
@@ -61,6 +76,7 @@ async def log_requests(request: Request, call_next: Callable[[Request], Awaitabl
         log.exception("unhandled error", extra=context)
         response = JSONResponse({"detail": "Internal server error", "request_id": request_id}, status_code=500)
     response.headers["x-request-id"] = request_id
+    response.headers.update(SECURITY_HEADERS)
     seconds = time.perf_counter() - start
     route = getattr(request.scope.get("route"), "path", metrics.UNMATCHED)
     metrics.observe(request.method, route, response.status_code, seconds)

@@ -1,3 +1,4 @@
+import pytest
 from fastapi.testclient import TestClient
 
 from twin_api import data
@@ -178,3 +179,13 @@ def test_too_many_pinned_slots_are_rejected():
     res = client.post("/schedules/repair", json={"plan": _issued_plan(), "pinned": ["x"] * (MAX_PLAN_SLOTS + 1)})
     assert res.status_code == 422
     assert res.json()["detail"][0]["loc"] == ["body", "pinned"]
+
+
+@pytest.mark.parametrize(("method", "path"), [("get", "/health"), ("get", "/wells/BGW-99"), ("get", "/docs"), ("post", "/schedules/check")])
+def test_every_response_carries_the_security_headers(method, path):
+    from twin_api.main import SECURITY_HEADERS
+
+    res = getattr(client, method)(path)
+    for name, value in SECURITY_HEADERS.items():
+        assert res.headers[name] == value
+    assert "frame-ancestors 'none'" in res.headers["content-security-policy"]

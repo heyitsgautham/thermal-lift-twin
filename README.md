@@ -107,7 +107,7 @@ Its tests replay the demo edit and must match the TypeScript repair move for mov
 | Errors | `error.tsx` and `global-error.tsx` show a retry screen, and browser errors go to `/api/client-errors` | unhandled errors answer 500 with the request id, and go to Sentry when `SENTRY_DSN` is set |
 | Health | `GET /api/health` | `GET /health`, 503 when a dataset file cannot load |
 | Metrics | none | `GET /metrics`, Prometheus |
-| Headers | CSP and hardening headers from `next.config.ts` | `X-Request-ID` on every response |
+| Headers | CSP and hardening headers from `next.config.ts` | CSP, nosniff, DENY framing, no referrer and `X-Request-ID` on every response |
 
 ### API
 
