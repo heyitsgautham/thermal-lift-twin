@@ -35,6 +35,31 @@ def daily():
     return pq.read_table(DATA_DIR / "daily.parquet")
 
 
+FILES = {"field": (field, "field.json"), "tables": (tables, "tables.json"), "daily": (daily, "daily.parquet")}
+
+
+def status() -> dict[str, str]:
+    """Load each dataset file and report "ok", or the error that stopped it.
+
+    The loaders cache only a successful load, so a file that appears or is
+    fixed after start-up reads as "ok" on the next check.
+    """
+    out = {}
+    for name, (load, filename) in FILES.items():
+        try:
+            load()
+            out[name] = "ok"
+        except Exception as exc:  # any load failure makes the service unready
+            out[name] = f"{type(exc).__name__} reading {filename}"
+    return out
+
+
+def reset() -> None:
+    """Drop the cached datasets so the next request reads the files again."""
+    for load, _ in FILES.values():
+        load.cache_clear()
+
+
 def well(well_id: str) -> dict[str, Any] | None:
     return next((w for w in field()["wells"] if w["id"] == well_id), None)
 

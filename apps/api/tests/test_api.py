@@ -8,7 +8,9 @@ client = TestClient(app)
 
 
 def test_health_and_field_counts():
-    assert client.get("/health").json()["status"] == "ok"
+    res = client.get("/health")
+    assert res.status_code == 200
+    assert res.json() == {"status": "ok", "data": "synthetic", "datasets": {"field": "ok", "tables": "ok", "daily": "ok"}}
     f = client.get("/field").json()
     assert f["field"] == {"name": "Heavy-oil field", "wellsDrilled": 52, "wellsProducing": 33, "wellsOnCss": 19}
 
@@ -132,3 +134,19 @@ def test_telemetry_rejects_dates_that_are_not_iso_dates():
 def test_telemetry_rejects_a_reversed_window():
     res = client.get("/wells/BGW-14/telemetry", params={"date_from": "2026-09-10", "date_to": "2026-09-01"})
     assert res.status_code == 422
+
+
+def test_health_is_unavailable_without_the_dataset(tmp_path, monkeypatch, caplog):
+    monkeypatch.setattr(data, "DATA_DIR", tmp_path)
+    data.reset()
+    try:
+        res = client.get("/health")
+    finally:
+        monkeypatch.undo()
+        data.reset()
+    assert res.status_code == 503
+    body = res.json()
+    assert body["status"] == "unavailable"
+    assert body["datasets"]["field"] == "FileNotFoundError reading field.json"
+    assert any(r.message == "dataset unavailable" for r in caplog.records)
+    assert client.get("/health").status_code == 200

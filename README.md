@@ -102,7 +102,7 @@ Its tests replay the demo edit and must match the TypeScript repair move for mov
 
 | Route | Returns |
 |---|---|
-| `GET /health` | `{"status": "ok", "data": "synthetic"}` |
+| `GET /health` | 200 with `"status": "ok"` when `field.json`, `tables.json` and `daily.parquet` all load, else 503 naming the file that failed |
 | `GET /field` | field facts, assumptions and the history summary |
 | `GET /wells`, `GET /wells/{id}` | the wells, and one well's full record |
 | `GET /wells/{id}/cycles` | the well's steam cycles |

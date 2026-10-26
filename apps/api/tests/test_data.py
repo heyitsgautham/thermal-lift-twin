@@ -48,3 +48,35 @@ def test_bgw_data_dir_points_the_service_at_another_dataset(tiny_data_dir, tmp_p
     assert tiny_data_dir.DATA_DIR == tmp_path
     assert tiny_data_dir.well("W-1") == {"id": "W-1"}
     assert [r["date"] for r in tiny_data_dir.telemetry("W-1", "2026-01-02", None)] == ["2026-01-02"]
+
+
+@pytest.fixture
+def empty_data_dir(tmp_path, monkeypatch):
+    monkeypatch.setattr(data, "DATA_DIR", tmp_path)
+    data.reset()
+    yield tmp_path
+    monkeypatch.undo()
+    data.reset()
+
+
+def test_status_is_ok_for_the_demo_dataset():
+    assert data.status() == {"field": "ok", "tables": "ok", "daily": "ok"}
+
+
+def test_status_names_each_missing_file(empty_data_dir):
+    assert data.status() == {
+        "field": "FileNotFoundError reading field.json",
+        "tables": "FileNotFoundError reading tables.json",
+        "daily": "FileNotFoundError reading daily.parquet",
+    }
+
+
+def test_status_reports_a_corrupt_file(empty_data_dir):
+    (empty_data_dir / "field.json").write_text("{not json")
+    assert data.status()["field"] == "JSONDecodeError reading field.json"
+
+
+def test_status_recovers_once_the_file_appears(empty_data_dir):
+    assert data.status()["tables"] != "ok"
+    (empty_data_dir / "tables.json").write_text("{}")
+    assert data.status()["tables"] == "ok"

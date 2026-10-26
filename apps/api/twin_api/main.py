@@ -114,9 +114,15 @@ def _plan(req: PlanRequest) -> list[dict[str, Any]]:
     return [s.model_dump() for s in req.plan]
 
 
-@app.get("/health")
-def health() -> dict[str, str]:
-    return {"status": "ok", "data": "synthetic"}
+@app.get("/health", responses={503: {"description": "A dataset file is missing or unreadable"}})
+def health() -> JSONResponse:
+    """Ready when all three dataset files load. Docker's healthcheck polls this."""
+    datasets = data.status()
+    ready = all(v == "ok" for v in datasets.values())
+    if not ready:
+        log.warning("dataset unavailable", extra={"datasets": datasets})
+    body = {"status": "ok" if ready else "unavailable", "data": "synthetic", "datasets": datasets}
+    return JSONResponse(body, status_code=200 if ready else 503)
 
 
 @app.get("/metrics", include_in_schema=False)
