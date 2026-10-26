@@ -10,18 +10,16 @@ import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium, type Page } from "playwright";
+import { baseUrl, viewports, type Viewport } from "./env";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)));
 const SHOTS = resolve(ROOT, "shots");
 const VIDEO = resolve(ROOT, "video");
-const BASE = process.env.BASE_URL ?? "http://localhost:3000";
+const BASE = baseUrl("http://localhost:3000");
 const HERO_WELL = "BGW-14";
 
 const record = process.argv.includes("--video");
-const viewports = (process.env.VIEWPORTS ?? "1920x1080,1440x900").split(",").map((v) => {
-  const [width, height] = v.split("x").map(Number);
-  return { name: v, width: width!, height: height! };
-});
+const sizes = viewports("1920x1080,1440x900");
 
 function easeInOut(t: number): number {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
@@ -58,7 +56,7 @@ async function settle(page: Page, ms: number) {
   await page.waitForTimeout(ms);
 }
 
-async function take(viewport: (typeof viewports)[number], video: boolean) {
+async function take(viewport: Viewport, video: boolean) {
   const browser = await chromium.launch();
   const context = await browser.newContext({
     viewport: { width: viewport.width, height: viewport.height },
@@ -100,6 +98,6 @@ async function take(viewport: (typeof viewports)[number], video: boolean) {
 
 mkdirSync(SHOTS, { recursive: true });
 if (record) mkdirSync(VIDEO, { recursive: true });
-for (const [i, viewport] of viewports.entries()) {
+for (const [i, viewport] of sizes.entries()) {
   await take(viewport, record && i === 0);
 }

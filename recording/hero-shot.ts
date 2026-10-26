@@ -9,11 +9,12 @@ import { existsSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { chromium } from "playwright";
+import { baseUrl } from "./env";
 
 type StoryWindow = { __story: { advance(ms: number): void; state(): { day: number } } };
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
-const BASE = process.env.BASE_URL ?? "http://localhost:3101";
+const BASE = baseUrl("http://localhost:3101");
 const PNG = resolve(ROOT, "../docs/hero.png");
 const ENV = resolve(ROOT, "../apps/web/.env.local");
 // 8 Nov, day 41 from the as-of date, 15 days into the float.

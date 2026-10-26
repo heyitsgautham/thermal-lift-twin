@@ -145,7 +145,7 @@ A screen that throws while rendering shows `apps/web/src/app/error.tsx`, which r
 | `SENTRY_DSN` | API | unset | turns on Sentry error tracking; unset sends nothing |
 | `SENTRY_ENVIRONMENT` | API | `development` | environment name on Sentry events |
 | `NEXT_OUTPUT` | `next.config.ts` | unset | `standalone` in the web Dockerfile |
-| `BASE_URL`, `VIEWPORTS` | recording scripts | `http://localhost:3000`, `1920x1080,1440x900` | the app and screen sizes the takes capture |
+| `BASE_URL`, `VIEWPORTS` | recording scripts | `http://localhost:3000` (`3101` for the story takes), `1920x1080,1440x900` | the app and screen sizes the takes capture; a blank value keeps the default |
 
 `apps/web/.env.example` covers the web app and the name check.
 `.env.example` at the root covers `docker compose`.

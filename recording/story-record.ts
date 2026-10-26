@@ -16,6 +16,7 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import ffmpegPath from "ffmpeg-static";
 import { chromium, type CDPSession, type Page } from "playwright";
+import { baseUrl } from "./env";
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(ROOT, "out");
@@ -24,7 +25,7 @@ const PREVIEW = resolve(OUT, "story-2d-preview");
 const MP4 = resolve(OUT, "story-2d.mp4");
 const SHEET = resolve(OUT, "story-2d-sheet.jpg");
 const TIMING = resolve(ROOT, "story-timing.md");
-const BASE = process.env.BASE_URL ?? "http://localhost:3101";
+const BASE = baseUrl("http://localhost:3101");
 const FPS = 30;
 const DT = 1000 / FPS;
 const VIEW = { width: 1600, height: 900 };

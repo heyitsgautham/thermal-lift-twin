@@ -19,11 +19,12 @@ import { chromium, type Locator } from "playwright";
 import { freeSpot, union, VIEW_H, VIEW_W, type Box } from "./framing";
 import { box, lowerThird, OVERLAYS, ring, textRects, unzoom, zoomTo } from "./overlays";
 import { SCENES, TOTAL_S } from "./storyboard";
+import { baseUrl } from "./env";
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(ROOT, "out");
 const FRAMES = resolve(OUT, "frames");
-const BASE = process.env.BASE_URL ?? "http://localhost:3000";
+const BASE = baseUrl("http://localhost:3000");
 const OUT_W = 1920;
 const OUT_H = 1080;
 const MP4 = resolve(OUT, "calendar-take.mp4");

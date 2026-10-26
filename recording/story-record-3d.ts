@@ -19,12 +19,13 @@ import { chromium } from "playwright";
 import { FieldModel, type FieldDataset } from "../packages/optimise/src";
 import { fieldStory, fieldYear, wellStory } from "../apps/web/src/components/story-3d/engine";
 import { DURATION, FPS, SCENES } from "../apps/web/src/components/story-3d/script";
+import { baseUrl } from "./env";
 
 const ROOT = dirname(fileURLToPath(import.meta.url));
 const OUT = resolve(ROOT, "out");
 const SHEET = resolve(OUT, "story-3d-sheet");
 const MP4 = resolve(OUT, "story-3d.mp4");
-const BASE = process.env.BASE_URL ?? "http://localhost:3101";
+const BASE = baseUrl("http://localhost:3101");
 const SHEET_EVERY_S = 5;
 const FFMPEG = ffmpegPath as unknown as string;
 
