@@ -128,6 +128,7 @@ Its tests replay the demo edit and must match the TypeScript repair move for mov
 `apps/api/twin_api/models.py` holds the request and response schemas, and http://localhost:8000/docs publishes them.
 A plan may only use issued slot ids, each once and on its own well, with `start_d` at 0 or later.
 The API answers anything else with a 422 that names the slots.
+A request body declared over 256 KB gets a 413 before the API reads it, and a plan or pin list over 200 entries gets a 422.
 Every request logs one JSON line to stderr with method, path, status, duration and a request id.
 The response returns the same id in `X-Request-ID`.
 With `SENTRY_DSN` set, every unhandled error also goes to Sentry with that request id, without request bodies, cookies or client IPs.

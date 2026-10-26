@@ -35,13 +35,18 @@ class Capacity(BaseModel):
     unitCapacity_t_per_h: float = Field(12.0, gt=0)
 
 
+# The issued plan holds one slot per steam well, and a plan may only use issued
+# slots once each, so no valid request comes near these caps.
+MAX_PLAN_SLOTS = 200
+
+
 class PlanRequest(BaseModel):
-    plan: list[SlotIn]
+    plan: list[SlotIn] = Field(max_length=MAX_PLAN_SLOTS)
     capacity: Capacity = Capacity()
 
 
 class RepairRequest(PlanRequest):
-    pinned: list[str] = []
+    pinned: list[str] = Field(default_factory=list, max_length=MAX_PLAN_SLOTS)
 
 
 class Health(BaseModel):

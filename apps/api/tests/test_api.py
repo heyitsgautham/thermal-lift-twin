@@ -150,3 +150,31 @@ def test_health_is_unavailable_without_the_dataset(tmp_path, monkeypatch, caplog
     assert body["datasets"]["field"] == "FileNotFoundError reading field.json"
     assert any(r.message == "dataset unavailable" for r in caplog.records)
     assert client.get("/health").status_code == 200
+
+
+def test_a_body_declared_over_the_limit_is_refused_unread():
+    from twin_api.main import MAX_BODY_BYTES
+
+    plan = _issued_plan() * 2000
+    res = client.post("/schedules/check", json={"plan": plan})
+    assert len(res.request.content) > MAX_BODY_BYTES
+    assert res.status_code == 413
+    assert res.json() == {"detail": f"Request body over {MAX_BODY_BYTES} bytes"}
+    assert res.headers["x-request-id"]
+
+
+def test_a_plan_longer_than_any_valid_plan_is_rejected():
+    from twin_api.models import MAX_PLAN_SLOTS
+
+    plan = (_issued_plan() * 20)[: MAX_PLAN_SLOTS + 1]
+    res = client.post("/schedules/check", json={"plan": plan})
+    assert res.status_code == 422
+    assert res.json()["detail"][0]["type"] == "too_long"
+
+
+def test_too_many_pinned_slots_are_rejected():
+    from twin_api.models import MAX_PLAN_SLOTS
+
+    res = client.post("/schedules/repair", json={"plan": _issued_plan(), "pinned": ["x"] * (MAX_PLAN_SLOTS + 1)})
+    assert res.status_code == 422
+    assert res.json()["detail"][0]["loc"] == ["body", "pinned"]

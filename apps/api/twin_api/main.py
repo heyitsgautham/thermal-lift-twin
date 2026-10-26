@@ -35,6 +35,19 @@ app = FastAPI(
 )
 
 
+# A full plan is one slot per issued slot, a few kilobytes. Anything that
+# declares far more is refused before the body is read or parsed.
+MAX_BODY_BYTES = 256 * 1024
+
+
+@app.middleware("http")
+async def limit_body(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
+    declared = request.headers.get("content-length", "")
+    if declared.isdigit() and int(declared) > MAX_BODY_BYTES:
+        return JSONResponse({"detail": f"Request body over {MAX_BODY_BYTES} bytes"}, status_code=413)
+    return await call_next(request)
+
+
 @app.middleware("http")
 async def log_requests(request: Request, call_next: Callable[[Request], Awaitable[Response]]) -> Response:
     given = request.headers.get("x-request-id", "")
