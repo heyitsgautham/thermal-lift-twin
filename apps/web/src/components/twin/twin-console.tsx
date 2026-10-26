@@ -191,6 +191,11 @@ export function TwinConsole({ twin, asOf, holdOverload }: Props) {
     chip = { text: "Re-sequencing", tone: "shift" };
     headline = <>Twin is re-sequencing</>;
     sub = <>Trying each other well on those days, one day at a time, up to 21 days either way.</>;
+  } else if (stage === "resolved" && repair && !repair.feasible) {
+    // Checked before a ready proposal: an infeasible repair can still carry the partial moves it tried.
+    chip = { text: "No fit", tone: "alert" };
+    headline = <span className="text-alert">No supported proposal</span>;
+    sub = <>No single move within 21 days clears the overload. Lower the demand or raise capacity.</>;
   } else if (stage === "resolved" && repair && move) {
     chip = { text: "Proposal ready", tone: "ok" };
     headline = <>Proposal fits the generators</>;
@@ -199,10 +204,6 @@ export function TwinConsole({ twin, asOf, holdOverload }: Props) {
         {move.wellId} steam moved {fmtShift(move.delta_d)}. Cheapest of {clearingOptions} {clearingOptions === 1 ? "move" : "moves"} that clear it.
       </>
     );
-  } else if (stage === "resolved" && repair && !repair.feasible) {
-    chip = { text: "No fit", tone: "alert" };
-    headline = <span className="text-alert">No supported proposal</span>;
-    sub = <>No single move within 21 days clears the overload. Lower the demand or raise capacity.</>;
   } else if (stage === "resolved") {
     chip = { text: "Fits", tone: "ok" };
     headline = <>Proposal fits the generators</>;
@@ -280,8 +281,11 @@ export function TwinConsole({ twin, asOf, holdOverload }: Props) {
             {stage === "resolved" && move && (
               <Step tone="shift">
                 Twin moved <b className="font-semibold">{move.wellId}</b> steam {Math.abs(move.delta_d)} d{" "}
-                {move.delta_d > 0 ? "later" : "earlier"}, to start {shortDate(asOf, move.toStart_d)}, which clears every
-                overloaded day. {move.wellId} gives up {fmtInt(Math.abs(move.oilChange_bbl))} bbl inside the 90 days
+                {move.delta_d > 0 ? "later" : "earlier"}, to start {shortDate(asOf, move.toStart_d)}
+                {repair?.feasible
+                  ? ", which clears every overloaded day. "
+                  : `. The moves it found still leave ${evalView.overloadDays.length} ${evalView.overloadDays.length === 1 ? "day" : "days"} over capacity. `}
+                {move.wellId} gives up {fmtInt(Math.abs(move.oilChange_bbl))} bbl inside the 90 days
                 {move.valueChange_bbl > -VALUE_NOISE_BBL
                   ? " and makes it back after day 90."
                   : `, a net cost of ${fmtInt(-move.valueChange_bbl)} bbl once later oil is counted.`}
