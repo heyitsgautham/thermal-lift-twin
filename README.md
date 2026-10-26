@@ -98,6 +98,17 @@ It does not call the API.
 The API reads the same folder and schedules on `tables.json`, the per-cycle oil curves the TypeScript twin exported, so the two cannot disagree on physics.
 Its tests replay the demo edit and must match the TypeScript repair move for move.
 
+### Inputs, errors and logs
+
+| Concern | Web app | API |
+|---|---|---|
+| Input checks | `checkDataset` on `field.json` at load, `?well=` resolved against the steam wells | pydantic models in `twin_api/models.py`, plan checks that name the bad slots |
+| Logs | one JSON line per server error, from `instrumentation.ts` | one JSON line per request, with a request id |
+| Errors | `error.tsx` and `global-error.tsx` show a retry screen, and browser errors go to `/api/client-errors` | unhandled errors answer 500 with the request id, and go to Sentry when `SENTRY_DSN` is set |
+| Health | `GET /api/health` | `GET /health`, 503 when a dataset file cannot load |
+| Metrics | none | `GET /metrics`, Prometheus |
+| Headers | CSP and hardening headers from `next.config.ts` | `X-Request-ID` on every response |
+
 ### API
 
 | Route | Returns |
