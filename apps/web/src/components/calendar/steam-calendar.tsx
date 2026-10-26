@@ -21,7 +21,9 @@ import { computeGeometry, useElementSize } from "./geometry";
 import { GeneratorLane } from "./generator-lane";
 import { Readouts } from "./readouts";
 import { runsOf } from "./runs";
-import { ColdRow, CssRow, PatternDefs, type RowMark } from "./well-rows";
+import { PatternDefs } from "./rate-area";
+import type { RowMark } from "./slot-block";
+import { ColdRow, CssRow } from "./well-rows";
 
 function Legend() {
   const item = (swatch: React.ReactNode, label: string) => (
