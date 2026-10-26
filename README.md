@@ -131,6 +131,7 @@ The pages are static, so the Next.js server has two routes of its own.
 The server logs each request error as one JSON line in the API's shape, from Next's `onRequestError` hook in `apps/web/src/instrumentation.ts`.
 In the browser, `apps/web/src/instrumentation-client.ts` reports uncaught errors and unhandled promise rejections to `/api/client-errors`, which logs them the same way.
 Each distinct error goes once per page load, and a page sends at most 10.
+A screen that throws while rendering shows `apps/web/src/app/error.tsx`, which reports the error and offers a retry and a link back to the story.
 
 ## Configuration
 
