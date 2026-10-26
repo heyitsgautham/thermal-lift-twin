@@ -1,35 +1,21 @@
 // @vitest-environment jsdom
-import { FieldModel } from "@bgw/optimise";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, screen, within } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
-import { TwinProvider } from "@/components/twin/twin-provider";
 import { buildCycleView } from "@/lib/cycle-view";
 import { dataset } from "@/lib/dataset";
 import { shortDate } from "@/lib/dates";
 import { fmtInt } from "@/lib/format";
 import { CyclePlanScreen } from "../cycle-plan";
+import { field, renderInTwin, stubLayout } from "./render-screen";
 
 const asOf = dataset.meta.asOf;
-const field = new FieldModel(dataset);
 const viewOf = (wellId: string) => buildCycleView(field, wellId, dataset.issuedPlan, dataset.issuedPlan);
 
-beforeAll(() => {
-  // jsdom has no layout, so charts measure a fixed box.
-  globalThis.ResizeObserver = class {
-    observe() {}
-    unobserve() {}
-    disconnect() {}
-  };
-  Element.prototype.getBoundingClientRect = () => ({ x: 0, y: 0, top: 0, left: 0, right: 1400, bottom: 700, width: 1400, height: 700, toJSON() {} });
-});
+beforeAll(stubLayout);
 afterEach(cleanup);
 
 function renderScreen() {
-  return render(
-    <TwinProvider fallback={<div>loading</div>}>
-      <CyclePlanScreen />
-    </TwinProvider>,
-  );
+  return renderInTwin(<CyclePlanScreen />);
 }
 
 function readout(label: string) {
