@@ -3,6 +3,7 @@
 import type { FieldDataset } from "@bgw/optimise";
 import { createContext, useContext, useState, useSyncExternalStore } from "react";
 import { dataset } from "@/lib/dataset";
+import { resolveFocusWell } from "@/lib/focus-well";
 import { useTwin, type Twin } from "./use-twin";
 
 // One twin for the whole app. The calendar's proposal, the capacity setting and
@@ -24,8 +25,11 @@ const subscribeNothing = () => () => {};
 function TwinState({ children }: { children: React.ReactNode }) {
   const [holdOverload] = useState(() => new URLSearchParams(window.location.search).get("hold") === "overload");
   const twin = useTwin(dataset, { holdOverload });
-  const [focusWell, setFocusWell] = useState(
-    () => new URLSearchParams(window.location.search).get("well") ?? "BGW-14",
+  const [focusWell, setFocusWell] = useState(() =>
+    resolveFocusWell(
+      new URLSearchParams(window.location.search).get("well"),
+      twin.field.cssWells.map((w) => w.id),
+    ),
   );
   return (
     <TwinContext.Provider value={{ twin, dataset, focusWell, setFocusWell, holdOverload }}>{children}</TwinContext.Provider>
