@@ -25,15 +25,16 @@ export default defineConfig({
         "**/__tests__/**",
       ],
       // A floor for everything, and stricter floors for the modules that hold
-      // the model and the app's logic. The three.js scenes and most screens
-      // are drawing code, checked by the recorded takes rather than here.
+      // the model, the app's logic and the screens rendered in jsdom. The
+      // three.js scenes need WebGL, so the recorded takes check them instead.
       thresholds: {
-        lines: 45,
-        statements: 45,
-        functions: 40,
-        branches: 35,
+        lines: 68,
+        statements: 68,
+        functions: 65,
+        branches: 62,
         "packages/*/src/**": { lines: 95, statements: 95, functions: 95, branches: 90 },
-        "apps/web/src/**/*.ts": { lines: 70, statements: 70, functions: 65, branches: 60 },
+        "apps/web/src/**/*.ts": { lines: 80, statements: 78, functions: 75, branches: 78 },
+        "apps/web/src/components/{screens,story,calendar}/**/*.tsx": { lines: 80, statements: 80, functions: 75, branches: 68 },
       },
     },
   },

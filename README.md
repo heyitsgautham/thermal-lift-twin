@@ -66,13 +66,13 @@ pnpm check       # name check, typecheck, lint, tests, then a production build
 | Suite | Where | What it covers |
 |---|---|---|
 | Model | `packages/*/test` | physics anchors, the re-steam rule, scheduler and repair, reliability, the seeded field |
-| Web | `apps/web/src/**/__tests__` | calendar geometry and dates, the story store, `useTwin`, and rendered screens in jsdom |
+| Web | `apps/web/src/**/__tests__` | every engineering screen and the 2D story rendered in jsdom, the 3D story's engine and frame state, `useTwin`, logging, error reporting and the security headers |
 | API | `apps/api/tests` | every route, input validation, JSON logging, and the Python scheduler against the TypeScript answer |
 | Recording | `recording/*.test.ts` | zoom framing and cursor parking for the recorded takes |
 
 Coverage floors fail the run when coverage slips.
-`packages/*/src` must stay at 95% of lines, the web app's `.ts` modules at 70%, and the API at 90%.
-The three.js scenes and most screen drawing code have no unit tests.
+`packages/*/src` must stay at 95% of lines, the web app's `.ts` modules and its screen, story and calendar components at 80%, everything else at 68%, and the API at 90%.
+The three.js scenes need WebGL, which jsdom lacks, so they have no unit tests.
 The recorded takes in `recording/` exercise them instead.
 
 ## Architecture
