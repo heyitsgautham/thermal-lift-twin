@@ -118,6 +118,7 @@ A plan may only use issued slot ids, each once and on its own well, with `start_
 The API answers anything else with a 422 that names the slots.
 Every request logs one JSON line to stderr with method, path, status, duration and a request id.
 The response returns the same id in `X-Request-ID`.
+With `SENTRY_DSN` set, every unhandled error also goes to Sentry with that request id, without request bodies, cookies or client IPs.
 
 ### Web server
 
@@ -141,6 +142,8 @@ A screen that throws while rendering shows `apps/web/src/app/error.tsx`, which r
 | `PRIVATE_TERMS` | `pnpm check:names` | none | more words to block from tracked files, separated by `\|` |
 | `LOG_LEVEL` | API, web server | `INFO` | log level |
 | `BGW_DATA_DIR` | API | `data/demo` | folder with `field.json`, `tables.json` and `daily.parquet` |
+| `SENTRY_DSN` | API | unset | turns on Sentry error tracking; unset sends nothing |
+| `SENTRY_ENVIRONMENT` | API | `development` | environment name on Sentry events |
 | `NEXT_OUTPUT` | `next.config.ts` | unset | `standalone` in the web Dockerfile |
 | `BASE_URL`, `VIEWPORTS` | recording scripts | `http://localhost:3000`, `1920x1080,1440x900` | the app and screen sizes the takes capture |
 

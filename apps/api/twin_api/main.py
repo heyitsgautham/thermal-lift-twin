@@ -16,10 +16,11 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
 
-from . import data, logs, metrics
+from . import __version__, data, logs, metrics, tracking
 from .schedule import Scheduler, repair
 
 logs.configure()
+tracking.configure()
 log = logging.getLogger("twin_api.http")
 
 # A caller's X-Request-ID is echoed and logged only if it is short and plain,
@@ -28,7 +29,7 @@ _REQUEST_ID = re.compile(r"[A-Za-z0-9._-]{1,64}")
 
 app = FastAPI(
     title="Thermal Lift Twin API",
-    version="0.2.0",
+    version=__version__,
     description="Seeded synthetic heavy-oil field: wells, cycles, telemetry, failures, schedules, and the generator repair.",
 )
 

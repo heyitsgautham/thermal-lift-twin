@@ -8,6 +8,7 @@ dependencies = [
   "uvicorn>=0.30",
   "pyarrow>=17",
   "prometheus-client>=0.26",
+  "sentry-sdk>=2.73",
 ]
 
 [dependency-groups]
