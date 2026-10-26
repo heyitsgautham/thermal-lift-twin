@@ -142,6 +142,7 @@ jobs:
       - name: Smoke test
         run: |
           curl -fsS http://localhost:8000/health
+          curl -fsS http://localhost:3000/api/health
           curl -fsS http://localhost:8000/wells/BGW-14 -o /dev/null
           curl -fsS http://localhost:3000/story -o /dev/null
           curl -fsS http://localhost:3000/calendar -o /dev/null

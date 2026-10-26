@@ -10,6 +10,8 @@ services:
         NEXT_PUBLIC_FIELD: ${NEXT_PUBLIC_FIELD:-}
         NEXT_PUBLIC_EVENT: ${NEXT_PUBLIC_EVENT:-}
         NEXT_PUBLIC_PS: ${NEXT_PUBLIC_PS:-}
+    environment:
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
     ports:
       - "3000:3000"
     restart: unless-stopped

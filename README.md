@@ -119,13 +119,23 @@ The API answers anything else with a 422 that names the slots.
 Every request logs one JSON line to stderr with method, path, status, duration and a request id.
 The response returns the same id in `X-Request-ID`.
 
+### Web server
+
+The pages are static, so the Next.js server has one route of its own.
+
+| Route | Returns |
+|---|---|
+| `GET /api/health` | `"status": "ok"` with the app version and the seed, as-of date and generator version of the bundled dataset |
+
+The server logs each request error as one JSON line in the API's shape, from Next's `onRequestError` hook in `apps/web/src/instrumentation.ts`.
+
 ## Configuration
 
 | Variable | Read by | Default | Purpose |
 |---|---|---|---|
 | `NEXT_PUBLIC_PRODUCT`, `NEXT_PUBLIC_FIELD`, `NEXT_PUBLIC_EVENT`, `NEXT_PUBLIC_PS` | web app, at build | neutral names | display names kept out of the public repo |
 | `PRIVATE_TERMS` | `pnpm check:names` | none | more words to block from tracked files, separated by `\|` |
-| `LOG_LEVEL` | API | `INFO` | log level |
+| `LOG_LEVEL` | API, web server | `INFO` | log level |
 | `BGW_DATA_DIR` | API | `data/demo` | folder with `field.json`, `tables.json` and `daily.parquet` |
 | `NEXT_OUTPUT` | `next.config.ts` | unset | `standalone` in the web Dockerfile |
 | `BASE_URL`, `VIEWPORTS` | recording scripts | `http://localhost:3000`, `1920x1080,1440x900` | the app and screen sizes the takes capture |
