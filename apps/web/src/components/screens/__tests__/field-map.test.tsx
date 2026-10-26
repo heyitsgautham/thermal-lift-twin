@@ -96,6 +96,12 @@ describe("field map screen", () => {
     expect(screen.queryByRole("button", { name: "Cycle plan" })).toBeNull();
   });
 
+  it("takes its well counts from the dataset", () => {
+    renderInTwin(<FieldMapScreen />);
+    expect(within(screen.getByTestId("highlight")).getByText(`${dataset.field.wellsOnCss} CSS wells`)).toBeTruthy();
+    expect(screen.getByText("From CSS wells").parentElement!.textContent).toContain(`from ${dataset.field.wellsOnCss} wells`);
+  });
+
   it("dims the cold wells until the highlight takes in all wells", () => {
     renderInTwin(<FieldMapScreen />);
     const cold = producing.find((w) => w.status === "cold")!;

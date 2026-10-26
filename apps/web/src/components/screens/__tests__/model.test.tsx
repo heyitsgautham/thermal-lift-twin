@@ -27,6 +27,7 @@ describe("model screen", () => {
     expect(within(readout("Daily history rows")).getByText(fmtInt(dataset.history.dailyRows))).toBeTruthy();
     expect(within(readout("Failures in history")).getByText(String(dataset.history.failures))).toBeTruthy();
     expect(within(readout("Seed")).getByText(String(dataset.meta.seed))).toBeTruthy();
+    expect(readout("Daily history rows").textContent).toContain(`, ${dataset.field.wellsProducing} wells`);
     expect(readout("Missing days").textContent).toContain(`${fmtFixed(dataset.history.missingFraction * 100, 1)}%`);
   });
 

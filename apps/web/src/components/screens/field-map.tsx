@@ -196,7 +196,7 @@ export function FieldMapScreen() {
         }
       >
         <Readout label="Field oil" value={fmtInt(fieldOil)} unit="bbl/d" note={<>on {shortDate(asOf, day)}</>} testId="readout-field-oil" />
-        <Readout label="From CSS wells" value={`${Math.round((cssOil / fieldOil) * 100)}%`} note={<>{fmtInt(cssOil)} bbl/d from 19 wells</>} />
+        <Readout label="From CSS wells" value={`${Math.round((cssOil / fieldOil) * 100)}%`} note={<>{fmtInt(cssOil)}{` bbl/d from ${dataset.field.wellsOnCss} wells`}</>} />
         <Readout label="In steam or soak" value={String(counts.steam + counts.soak)} note={<>{counts.steam} steam, {counts.soak} soak</>} tone="steam" />
         <Readout label="Risk flags" value={String([...risks.values()].filter((r) => r.risk.high >= 0.1).length)} note="est. 7-day risk above 10%" tone="alert" />
       </ScreenHeader>
@@ -316,7 +316,7 @@ export function FieldMapScreen() {
                 onChange={setHighlight}
                 testId="highlight"
                 options={[
-                  { value: "css", label: "19 CSS wells" },
+                  { value: "css", label: `${dataset.field.wellsOnCss} CSS wells` },
                   { value: "all", label: "All wells" },
                 ]}
               />

@@ -135,7 +135,7 @@ export function ModelScreen() {
   return (
     <div className="flex h-full min-h-0 flex-col gap-2.5 px-5 pt-3 pb-2 max-[1600px]:px-4" data-testid="model">
       <ScreenHeader title="Model" subtitle="The chain the twin runs, the published points it is pinned to, and where every number on these screens comes from">
-        <Readout label="Daily history rows" value={fmtInt(dataset.history.dailyRows)} note={<>{dataset.history.from.slice(0, 4)} to {dataset.history.to.slice(0, 4)}, 33 wells</>} />
+        <Readout label="Daily history rows" value={fmtInt(dataset.history.dailyRows)} note={<>{dataset.history.from.slice(0, 4)} to {dataset.history.to.slice(0, 4)}{`, ${dataset.field.wellsProducing} wells`}</>} />
         <Readout label="Failures in history" value={String(dataset.history.failures)} note="drawn from the stated hazard" />
         <Readout label="Missing days" value={`${fmtFixed(dataset.history.missingFraction * 100, 1)}%`} note={`${dataset.history.frozenRuns} frozen-tag runs`} />
         <Readout label="Seed" value={String(dataset.meta.seed)} note={`generator ${dataset.meta.generatorVersion}`} />
