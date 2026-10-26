@@ -121,13 +121,16 @@ The response returns the same id in `X-Request-ID`.
 
 ### Web server
 
-The pages are static, so the Next.js server has one route of its own.
+The pages are static, so the Next.js server has two routes of its own.
 
 | Route | Returns |
 |---|---|
 | `GET /api/health` | `"status": "ok"` with the app version and the seed, as-of date and generator version of the bundled dataset |
+| `POST /api/client-errors` | 204 after logging a browser error report, 400 for a malformed report, 413 for one over 8 KB |
 
 The server logs each request error as one JSON line in the API's shape, from Next's `onRequestError` hook in `apps/web/src/instrumentation.ts`.
+In the browser, `apps/web/src/instrumentation-client.ts` reports uncaught errors and unhandled promise rejections to `/api/client-errors`, which logs them the same way.
+Each distinct error goes once per page load, and a page sends at most 10.
 
 ## Configuration
 
