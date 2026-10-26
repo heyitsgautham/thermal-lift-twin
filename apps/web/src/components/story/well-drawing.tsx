@@ -4,6 +4,30 @@ import { apiToSpecificGravity, peakDownstrokeSpeed_m_per_s, polishedRodPosition_
 import { shortDate } from "@/lib/dates";
 import { fmtFixed } from "@/lib/format";
 import { clamp, dayView, easeOut, runOf, since, storyData } from "./data";
+import {
+  W,
+  H,
+  GROUND,
+  WELL_X,
+  PIVOT,
+  R_HEAD,
+  REAR,
+  GEAR,
+  CRANK_R,
+  STUFFING_Y,
+  TEE_Y,
+  depthY,
+  PAY_TOP,
+  PUMP_TOP,
+  PUMP_BOTTOM,
+  GLOW,
+  INSET,
+  STRATA,
+  wavyTop,
+  DEPTHS,
+  pumpjackPose,
+} from "./drawing-geometry";
+import { Pill, Tag } from "./drawing-labels";
 import { HeatLens, PumpInset } from "./well-parts";
 import type { StoryState } from "./store";
 
@@ -11,103 +35,6 @@ import type { StoryState } from "./store";
 // cross-section. Surface equipment is to scale with itself; the wellbore is
 // drawn wider than scale and the depth is compressed. Every moving part reads
 // the story clock and the engine's state for the day in view.
-
-const W = 1040;
-const H = 660;
-const GROUND = 262;
-const WELL_X = 270;
-const PIVOT = { x: 420, y: 112 };
-const R_HEAD = 150;
-const REAR = 118;
-const AMAX = (9.5 * Math.PI) / 180;
-const GEAR = { x: PIVOT.x + REAR, y: PIVOT.y + 94 };
-const CRANK_R = REAR * Math.sin(AMAX);
-const CARRIER_BOTTOM = 198;
-const TRAVEL = R_HEAD * 2 * AMAX;
-const STUFFING_Y = 208;
-const TEE_Y = 222;
-
-const depthY = (m: number) => GROUND + 10 + (m * 268) / 1100;
-const PAY_TOP = depthY(1150);
-const PUMP_TOP = depthY(1100) - 26;
-const PUMP_BOTTOM = PUMP_TOP + 32;
-const GLOW = { x: WELL_X, y: (PAY_TOP + 646) / 2 };
-const INSET = { x: 424, y: 290, w: 500, h: 238 };
-
-/** Rock layers, top down. Each top boundary undulates a little, so the section reads as rock, not a chart. */
-const STRATA = [
-  { top: GROUND, fill: "#eadabc", pattern: "p-dots-fine", amp: 0, phase: 0 },
-  { top: depthY(185), fill: "#dfc9a4", pattern: "p-lines", amp: 3.5, phase: 0.4 },
-  { top: depthY(330), fill: "#e4d2b0", pattern: "p-dots-fine", amp: 2.5, phase: 2.1 },
-  { top: depthY(440), fill: "#d5bf9b", pattern: "p-bricks", amp: 4, phase: 1.2 },
-  { top: depthY(660), fill: "#c9af8b", pattern: "p-lines-fine", amp: 3, phase: 2.6 },
-  { top: depthY(800), fill: "#bfa382", pattern: "p-lines", amp: 2.5, phase: 0.9 },
-  { top: depthY(880), fill: "#a89276", pattern: "p-lines-fine", amp: 2, phase: 3.3 },
-  { top: depthY(1080), fill: "#948068", pattern: "p-lines-fine", amp: 1.5, phase: 1.7 },
-  { top: PAY_TOP, fill: "#dcb271", pattern: "p-sand", amp: 1.2, phase: 0.2 },
-];
-
-function wavyTop(y: number, amp: number, phase: number): string {
-  const pts: string[] = [];
-  for (let x = 0; x <= W; x += 20) {
-    const dy = amp * (Math.sin(x / 97 + phase) + 0.45 * Math.sin(x / 41 + phase * 2.3));
-    pts.push(`${x} ${(y + dy).toFixed(1)}`);
-  }
-  return `M${pts.join(" L")}`;
-}
-
-const DEPTHS = [0, 300, 600, 900, 1150];
-
-function Pill({ x, y, text, anchor = "start", tone = "ink", opacity = 1, size = 14 }: {
-  x: number;
-  y: number;
-  text: string;
-  anchor?: "start" | "end";
-  tone?: "ink" | "alert" | "produce";
-  opacity?: number;
-  size?: number;
-}) {
-  const w = text.length * size * 0.56 + 18;
-  const x0 = anchor === "end" ? x - w : x;
-  const fg = tone === "alert" ? "#fbf4e8" : tone === "produce" ? "#fbf4e8" : "var(--ink)";
-  const bg = tone === "alert" ? "var(--alert)" : tone === "produce" ? "var(--produce)" : "rgb(251 247 240 / 0.92)";
-  return (
-    <g opacity={opacity}>
-      <rect x={x0} y={y - size + 1} width={w} height={size + 12} rx={3} fill={bg} stroke={tone === "ink" ? "var(--rule-strong)" : "none"} />
-      <text x={x0 + 9} y={y + 5} fontSize={size} fill={fg} fontWeight={600} style={{ fontFamily: "var(--font-archivo)" }}>
-        {text}
-      </text>
-    </g>
-  );
-}
-
-function Tag({ x, y, w, title, value, sub, tone, opacity }: {
-  x: number;
-  y: number;
-  w: number;
-  title: string;
-  value: string;
-  sub: string;
-  tone: "alert" | "produce";
-  opacity: number;
-}) {
-  const accent = tone === "alert" ? "var(--alert)" : "var(--produce)";
-  return (
-    <g opacity={opacity}>
-      <rect x={x} y={y} width={w} height={52} rx={4} fill="rgb(251 247 240 / 0.96)" stroke="var(--rule-strong)" />
-      <rect x={x} y={y} width={4} height={52} rx={2} fill={accent} />
-      <text x={x + 16} y={y + 22} fontSize={13} fontWeight={700} letterSpacing="0.1em" fill="var(--ink-2)" style={{ fontFamily: "var(--font-archivo)" }}>
-        {title.toUpperCase()}
-      </text>
-      <text x={x + w - 14} y={y + 23} textAnchor="end" fontSize={18} fontWeight={700} fill="var(--ink)" style={{ fontFamily: "var(--font-archivo)" }}>
-        {value}
-      </text>
-      <text x={x + 16} y={y + 43} fontSize={14} fill={accent} fontWeight={600} style={{ fontFamily: "var(--font-archivo)" }}>
-        {sub}
-      </text>
-    </g>
-  );
-}
 
 export function WellDrawing({ s }: { s: StoryState }) {
   const { well, asOf, field } = storyData();
@@ -123,15 +50,7 @@ export function WellDrawing({ s }: { s: StoryState }) {
   const downProgress = upstroke ? 0 : (cyc - up) / (1 - up);
 
   // Walking beam, crank and pitman follow the polished rod.
-  const theta = AMAX * (2 * p - 1);
-  const deg = (theta * 180) / Math.PI;
-  const rear = { x: PIVOT.x + REAR * Math.cos(theta), y: PIVOT.y + REAR * Math.sin(theta) };
-  const acos = Math.acos(clamp(1 - 2 * p, -1, 1));
-  const phi = upstroke ? acos : 2 * Math.PI - acos;
-  const pin = { x: GEAR.x + CRANK_R * Math.sin(phi), y: GEAR.y - CRANK_R * Math.cos(phi) };
-  const out = { x: (pin.x - GEAR.x) / CRANK_R, y: (pin.y - GEAR.y) / CRANK_R };
-  const crankDeg = (Math.atan2(out.y, out.x) * 180) / Math.PI;
-  const carrierY = CARRIER_BOTTOM - p * TRAVEL;
+  const { deg, rear, pin, crankDeg, carrierY } = pumpjackPose(p, upstroke);
 
   const producing = v.phase === "produce";
   const steaming = v.phase === "steam";
